@@ -37,7 +37,7 @@ func (s *Service) approveRequest(
 		},
 	}).Sign(s.withdrawCfg.Signer).Marshal()
 	if err != nil {
-		return errors.Wrap(err, "failed to prepareVerify transaction envelope")
+		return errors.Wrap(err, "failed to prepare transaction envelope")
 	}
 	_, err = s.txSubmitter.Submit(ctx, envelope, true)
 	if err != nil {
@@ -58,13 +58,14 @@ func (s *Service) permanentReject(
 		ID:     id,
 		Hash:   &request.Attributes.Hash,
 		Action: xdr.ReviewRequestOpActionPermanentReject,
+		Reason: reason,
 	}).Sign(s.withdrawCfg.Signer).Marshal()
 	if err != nil {
-		return errors.Wrap(err, "failed to prepareVerify transaction envelope")
+		return errors.Wrap(err, "failed to prepare transaction envelope")
 	}
 	_, err = s.txSubmitter.Submit(ctx, envelope, true)
 	if err != nil {
-		return errors.Wrap(err, "failed to approve withdraw request")
+		return errors.Wrap(err, "failed to permanently reject withdraw request")
 	}
 
 	return nil

@@ -31,7 +31,6 @@ func (s *Service) Run(ctx context.Context) {
 					WithError(err).
 					WithField("details", details).
 					Warn("failed to process withdraw request")
-				continue
 			}
 		}
 		return nil

@@ -8,7 +8,7 @@ import (
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/client"
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/page"
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/query"
-	"gitlab.com/distributed_lab/logan/v3"
+	logan "gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	regources "gitlab.com/tokend/regources/generated"
 )
@@ -140,8 +140,8 @@ func (g *defaultCreateWithdrawRequestHandler) Prev() (*regources.ReviewableReque
 	result := &regources.ReviewableRequestListResponse{}
 	err := g.base.PageFromLink(g.currentPageLinks.Prev, result)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get next page", logan.F{
-			"link": g.currentPageLinks.Next,
+		return nil, errors.Wrap(err, "failed to get previous page", logan.F{
+			"link": g.currentPageLinks.Prev,
 		})
 	}
 
@@ -160,8 +160,8 @@ func (g *defaultCreateWithdrawRequestHandler) Self() (*regources.ReviewableReque
 	result := &regources.ReviewableRequestListResponse{}
 	err := g.base.PageFromLink(g.currentPageLinks.Self, result)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get next page", logan.F{
-			"link": g.currentPageLinks.Next,
+		return nil, errors.Wrap(err, "failed to get same page", logan.F{
+			"link": g.currentPageLinks.Self,
 		})
 	}
 
@@ -178,10 +178,10 @@ func (g *defaultCreateWithdrawRequestHandler) First() (*regources.ReviewableRequ
 		})
 	}
 	result := &regources.ReviewableRequestListResponse{}
-	err := g.base.PageFromLink(g.currentPageLinks.Self, result)
+	err := g.base.PageFromLink(g.currentPageLinks.First, result)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get next page", logan.F{
-			"link": g.currentPageLinks.Next,
+		return nil, errors.Wrap(err, "failed to get first page", logan.F{
+			"link": g.currentPageLinks.First,
 		})
 	}
 
