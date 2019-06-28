@@ -17,7 +17,6 @@ func (s *Service) Run(ctx context.Context) {
 	go s.spawner(ctx)
 	go s.cancellor(ctx)
 	s.Wait()
-
 }
 
 func (s *Service) spawner(ctx context.Context) {

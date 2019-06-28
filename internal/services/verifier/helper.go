@@ -58,7 +58,9 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 		return nil
 	}
 	if err != nil {
-		return errors.Wrap(err, "transfer failed")
+		return errors.Wrap(err, "failed to get transaction receipt", logan.F{
+			"tx_hash": withdrawDetails.EthTxHash,
+		})
 	}
 
 	if receipt.Status != types.ReceiptStatusSuccessful {
@@ -87,6 +89,7 @@ func (s *Service) ensureEnoughConfirmations(ctx context.Context, blockNumber int
 	}
 	if err != nil {
 		s.log.WithError(err).Error("got error trying to fetch block")
+		return false
 	}
 
 	return true
