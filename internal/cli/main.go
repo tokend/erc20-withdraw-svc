@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"fmt"
 	"gitlab.com/distributed_lab/kit/kv"
 	"gitlab.com/distributed_lab/logan/v3"
 	"github.com/tokend/erc20-withdraw-svc/internal/config"
@@ -21,6 +22,7 @@ func Run(args []string) bool {
 	app := kingpin.New("erc20-withdraw-svc", "")
 	runCmd := app.Command("run", "run command")
 	withdraw := runCmd.Command("withdraw", "run withdraw service")
+	versionCmd := app.Command("version", "service revision")
 
 	cfg := config.NewConfig(kv.MustFromEnv())
 	log = cfg.Log()
@@ -34,6 +36,8 @@ func Run(args []string) bool {
 	case withdraw.FullCommand():
 		svc := withdrawer.New(cfg)
 		svc.Run(context.Background())
+	case versionCmd.FullCommand():
+		fmt.Println(config.ERC20WithdrawVersion)
 	default:
 		log.Errorf("unknown command %s", cmd)
 		return false

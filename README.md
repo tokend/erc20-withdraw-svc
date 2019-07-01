@@ -43,6 +43,7 @@ rpc:
 transfer:
   seed: "SECRET_SEED"
   address: "SOURCE_ADDRESS"
+  confirmations: 20 #number of confirmations to wait for
 
 
 log:

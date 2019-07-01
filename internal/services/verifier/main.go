@@ -23,6 +23,7 @@ type Opts struct {
 
 type Service struct {
 	withdrawCfg config.WithdrawConfig
+	ethCfg      config.TransferConfig
 	asset       watchlist.Details
 
 	builder     xdrbuild.Builder
@@ -39,6 +40,7 @@ func New(opts Opts) *Service {
 		client:      &opts.Client,
 		log:         opts.Log,
 		withdrawCfg: opts.Config.WithdrawConfig(),
+		ethCfg:      opts.Config.TransferConfig(),
 		txSubmitter: opts.Submitter,
 		builder:     opts.Builder,
 		asset:       opts.Asset,

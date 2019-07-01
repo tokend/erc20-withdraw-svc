@@ -12,7 +12,7 @@ rpc:
 transfer:
   seed: "SECRET_SEED"
   address: "SOURCE_ADDRESS"
-
+  confirmations: 20
 
 log:
   level: debug

@@ -6,6 +6,8 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 )
 
+var ERC20WithdrawVersion string
+
 type config struct {
 	transferConfig TransferConfig
 	withdrawConfig WithdrawConfig
@@ -29,7 +31,7 @@ func NewConfig(getter kv.Getter) Config {
 	return &config{
 		getter:    getter,
 		Horizoner: NewHorizoner(getter),
-		Ether: NewEther(getter),
-		Logger:    comfig.NewLogger(getter, comfig.LoggerOpts{}),
+		Ether:     NewEther(getter),
+		Logger:    comfig.NewLogger(getter, comfig.LoggerOpts{Release: ERC20WithdrawVersion}),
 	}
 }

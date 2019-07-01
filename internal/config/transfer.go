@@ -7,8 +7,9 @@ import (
 )
 
 type TransferConfig struct {
-	Seed string `fig:"seed"`
-	Address string `fig:"address"`
+	Seed          string `fig:"seed"`
+	Address       string `fig:"address"`
+	Confirmations int64  `fig:"confirmations"`
 }
 
 func (c *config) TransferConfig() TransferConfig {

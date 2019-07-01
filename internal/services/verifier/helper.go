@@ -83,7 +83,7 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 }
 
 func (s *Service) ensureEnoughConfirmations(ctx context.Context, blockNumber int64) bool {
-	_, err := s.client.BlockByNumber(ctx, big.NewInt(blockNumber+20))
+	_, err := s.client.BlockByNumber(ctx, big.NewInt(blockNumber+s.ethCfg.Confirmations))
 	if err == ethereum.NotFound {
 		return false
 	}

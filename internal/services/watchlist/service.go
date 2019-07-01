@@ -99,7 +99,6 @@ func (s *Service) filter(assets []regources.Asset) ([]Details, error) {
 		assetDetails := AssetDetails{}
 		_ = json.Unmarshal([]byte(details), &assetDetails)
 
-
 		if !assetDetails.ERC20.Withdraw {
 			continue
 		}
