@@ -1,0 +1,19 @@
+horizon:
+  endpoint: "SOME_VALID_ADDRESS"
+  signer: "G_ASSET_OWNER_SECRET_KEY" # Issuer of assets
+
+withdraw:
+  signer: "S_ASSET_OWNER_SECRET_KEY"
+  owner: "G_ASSET_OWNER_ADDRESS"
+
+rpc:
+  endpoint: "ETH_NODE_ADDRESS"
+
+transfer:
+  seed: "SECRET_SEED"
+  address: "SOURCE_ADDRESS"
+  confirmations: 20
+
+log:
+  level: debug
+  disable_sentry: true

@@ -1,0 +1,78 @@
+# Gopkg.toml example
+#
+# Refer to https://golang.github.io/dep/docs/Gopkg.toml.html
+# for detailed Gopkg.toml documentation.
+#
+# required = ["github.com/user/thing/cmd/thing"]
+# ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
+#
+# [[constraint]]
+#   name = "github.com/user/project"
+#   version = "1.0.0"
+#
+# [[constraint]]
+#   name = "github.com/user/project2"
+#   branch = "dev"
+#   source = "github.com/myfork/project2"
+#
+# [[override]]
+#   name = "github.com/x/y"
+#   version = "2.4.0"
+#
+# [prune]
+#   non-go = false
+#   go-tests = true
+#   unused-packages = true
+
+
+[[constraint]]
+  name = "github.com/ethereum/go-ethereum"
+  revision = "2b546660187e8b693b6bbe5ec0fc74bfc008d1d3"
+
+[[constraint]]
+  name = "github.com/go-ozzo/ozzo-validation"
+  version = "3.5.0"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.3.0"
+
+[[constraint]]
+  name = "gitlab.com/distributed_lab/figure"
+  version = "2.1.0"
+
+[[constraint]]
+  branch = "master"
+  name = "gitlab.com/distributed_lab/kit"
+
+[[constraint]]
+  name = "gitlab.com/distributed_lab/logan"
+  version = "3.7.1"
+
+[[constraint]]
+  name = "gitlab.com/distributed_lab/running"
+  version = "1.3.0"
+
+[[constraint]]
+  name = "gitlab.com/tokend/go"
+  version = "3.9.0"
+
+[[constraint]]
+  name = "gitlab.com/tokend/keypair"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "gitlab.com/tokend/regources"
+  version = "4.5.0"
+
+[[constraint]]
+  name = "gopkg.in/alecthomas/kingpin.v2"
+  version = "2.2.6"
+
+[prune]
+  go-tests = true
+  unused-packages = true
+  [[prune.project]]
+      name = "github.com/ethereum/go-ethereum"
+      non-go = false
+      unused-packages = false
