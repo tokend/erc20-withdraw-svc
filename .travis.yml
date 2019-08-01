@@ -1,0 +1,38 @@
+dist: bionic
+addons:
+  apt:
+    source:
+    - docker-bionic
+    packages:
+    - docker
+services:
+- docker
+env:
+  global:
+  - PROJECT: tokend
+  - IMAGE_NAME: erc20-withdraw-svc
+  - secure: UonZj0brQg0BDIv8j3ZUs5z6sbrVBv28hckuHcErkgTgRIwlGEUqFlmgUvMOuEJMHioIhSG9nmP6c/lryEYZd6WkwQ5aujgXMEO3hrqernzDhMqTh7Q8VSzq6Tof0OLryeAbh5F7/6UcbXL4DRiTvMXaOB50B7xr4/UlyhTD8/E2KXi87AXtmGZ4kDWH881yoXI0e+8EdOx0el1Jpdoujc6VONxk9Qeeh6fgnaTHLh3t/+H7ZzgydqkO2KR53r5VxLBiKaRC86hjrNVQhIVxOBbRmPjfPWf0UWocntr33+YVkfpODsxeMqFLvEZI8MZK/v+Oa5RugGoaxtQjF5ZIF2fPLFSGCXAGJ7i5lPdSEbz5Zp0pxrKhylTSNP4AboaDfBn/RvpWsk4vwk679yv4mkF/XIcNaZUFJq/KHdUUXI0dnX6qozdpbge1sHemM9lOKiipuD/RssY7Csi9YcuZdf5X6wMbDY8avlFT31NJAJix28+RFiD1nyIZamaqre+TNbcqJAYsC6gQ+YtmO6XvxWiVMBesRVUsqxsHb4ODJLO+0UudyZnRoknPIxXOkyQM74FR7RCqdQfvAA5jhJ5flj1cvbJHYPtDv7R/VexkZAOxC6wRYJhMJd/3Hq8oVKjjXBtVKgi+jiLnKCuYZ0IVOdkXKtCuaFkUXWd0dA2vV+s=
+  - secure: b3UjVPgpG/h+A2Ta0DjWfiNx9GKBTC3Tid6949pKNc6MKaTFi7ALcoDD/AhsAIu3HPV8pwSt8PcP8QBMpS+F+XCefalYMy9gedGYSJUyT+ALNao40xe2F4cTTZq/Ac4PEVRKB6xV/aVCilDbCrenNC5uhTkYWAojpOxfjdVMxSOlLS80PYSz05pRMj/Ad/gfJN3RUDTMMcS/wCtrTT6wQ7iuotc4oHu/GdJRZI9pPDwosPhBn87CtprThjiUEn0RKGVNiaf/+QSISWQyfU/Y6m+i0O7J5Ej6itzuq3YI6a7ED3q9rF5iyvMA8dauYPyyR3bOQ8vAh2mqFbxtUHMKQutfU+lwqKMSSy/SSpJLbr17sDIDT1hT1D2RhV82IeBfjjRZl6sNESzZ3NRaKf7KF/qIncvC+Kaxv4jXIC8CVKONUuBP407A+9Mm4+EcVt69x9miPoZj9V/M2tljPSpYpzMBHUn7NrbewMHAqhWffpxwprMu7R5GKY6j4GaSqQEjfvHxoGclvwUcmW/lKHc07KUBCDx0h+c5i7JnhL/kO8LPQTtNZrXyc7FXeuDKOfsp4Uqk82UrLXHyBmAZN8swX56kPC4tbQ0ITqWZxXVoh9x2rylcPjzQ/x49ppX+7vqvpp9BMBZWpZONMPN4MzGLw14xrqXozlijSM46KtT41YM=
+  - secure: i0ULfih/bR3T8K6BaQ9LUUWkWzx56YSNkIKRp9i/dtY+Is23oEK2y0ryAh85NvvI5hKJF+m2wO9blcxaHBm5IJEzAZotS2eh+ExMqrAJ/vCkBsFFKlEGbdEd9rmPFUgKDWLzpFNpJZk/yHmjyF5Gl6ssif7z3ScTFMA+jsLHmzkpjiS2SeD6E8NdYYRMiNLSJvOM6pMsrwe3E0V73nchCyDrewM0xLRa7Aq4d7flOdIkhW9fp9bhubDFG6N8DOTZd4ejwt9tc+2KI5vspJ4TwAiVAwdSX9uwbexm8OnNacQOGpzwfhwCQLHOVPjJh7lt+fcK7RSk/ltFIontNX82XE9eMD4VdiDauhn0OEKimvYXDKl0SA4oYfbl8CC/TLL/m6g3WcHT1x+681OlPEHmrOai/A+JQw01HDKuzEh6kbZ8YmgGbs2/kPzmk1uwg5Ht1q4hJkCL4B4hWtNGFD52Rw3lzcRo2yUM6ZsnI+Wv/krkjjez5oCx9sRGQe8V+NtlyhCSYreoyMihZeYmi83m25dVWgktABOu+aglhpNwIFFeHFiPCH4gGvKNvPbMJ1ng3VT1agMUo/wUAL5WcHjrBmcX3xxlKJU1pNrA+DUbo+P5ggugJlb2see4uWByFvLWOHVSFhGK63qp9hxmsqJc4CIIyFWT8H4hcs4qz6AOB1c=
+  - secure: DG1BaxEFdjaomngH62ryE/2+6d0ghS7Dxc8MEazBWl+s4jiicImqWBREMAMRECM8SCkpXkYKzngaDkYdgQPLtgLn/fM+IKuDvuIesT/xf5UWkGX5rQ5BpPkM6e0FWhmPhfs1+jyMl4DR91hspPMhwg3BE5guM4kJMdOZ1sCT9G5cENWfEkveVuGBmc1dZHrS6tAW8rcC+aZcvyWS2AYHCqZr5IUZjlFrcSAU4WR91yyp4gLOffCXRr0UGMoDX9otGvRqHNF5WbZYsVI4uTY0BkFywUe55bn+ZfiE2a1iR6CttylcZ0qHhIp4hWp9mgHQZpHezhqc/W1C3HFTFwfGdavXHyFiG5OfigB/mQS1lk3cLaAQWzho8RAxZPaUHU1IAxfJhLrZR+U683kQ0Z5tmdszaAdrn9GKF1kiuQg8pgIaWrmOUm33QXm6Ceb7hLa0136gYqKvUlc5gnSoFzvL7+nTYlRdlvau6E9TcfTcjO5smgNA617SnMK4d+ay/kJSsjsM38FKrAioDnZt6JgAY6ivUAZ1lJkz1Yuhc05BkX3AbYMopK0mJP2TLmosJO4SBEqaCBEawkTuqWJubUUz6c1PlYwW8zKgHecQiuexSr3Z5+THKgZ205/6WG+yNtFeol6Oqs48+lBlpgmX/tB+s6un9/gRFcC7/bBXnmW1Mso=
+script:
+- export IMAGE_TAG=$(test -z $TRAVIS_TAG && echo $TRAVIS_COMMIT || echo $TRAVIS_TAG)
+- docker build -t $PROJECT/$IMAGE_NAME:$IMAGE_TAG .
+before_deploy:
+- echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+- echo "$GITLABREG_PASSWORD" | docker login -u "$GITLABREG_USERNAME" --password-stdin
+  registry.gitlab.com
+- docker tag $PROJECT/$IMAGE_NAME:$IMAGE_TAG registry.gitlab.com/$PROJECT/docker-registry/$IMAGE_NAME:$IMAGE_TAG
+deploy:
+- provider: script
+  script:
+  - docker push $PROJECT/$IMAGE_NAME:$IMAGE_TAG
+  on:
+    all_branches: true
+    tags: true
+- provider: script
+  script:
+  - docker push registry.gitlab.com/$PROJECT/docker-registry/$IMAGE_NAME:$IMAGE_TAG
+  on:
+    all_branches: true
+    tags: false

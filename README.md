@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tokend/erc20-withdraw-svc.svg?branch=master)](https://travis-ci.org/tokend/erc20-withdraw-svc)
+
 # ERC20 withdraw service
 ERC20 withdraw service is a bridge between TokenD and Ethereum blockchain which allows 
 to withdraw tokens from TokenD to Ethereum blockchain.
