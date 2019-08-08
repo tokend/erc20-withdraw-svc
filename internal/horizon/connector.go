@@ -38,7 +38,7 @@ func (c *connector) WithSigner(signer keypair.Full) *connector {
 
 func (c *connector) State() (*regources.HorizonStateResponse, error) {
 	result := &regources.HorizonStateResponse{}
-	respBB, err := c.Get("/v3/")
+	respBB, err := c.Get("/v3/info")
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get horizon state")
 	}

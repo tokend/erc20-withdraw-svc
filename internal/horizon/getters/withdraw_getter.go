@@ -8,7 +8,7 @@ import (
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/client"
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/page"
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/query"
-	logan "gitlab.com/distributed_lab/logan/v3"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	regources "gitlab.com/tokend/regources/generated"
 )
@@ -123,6 +123,7 @@ func (g *defaultCreateWithdrawRequestHandler) Next() (*regources.ReviewableReque
 			"link": g.currentPageLinks.Next,
 		})
 	}
+	g.currentPageLinks = result.Links
 
 	return result, nil
 }
@@ -144,6 +145,7 @@ func (g *defaultCreateWithdrawRequestHandler) Prev() (*regources.ReviewableReque
 			"link": g.currentPageLinks.Prev,
 		})
 	}
+	g.currentPageLinks = result.Links
 
 	return result, nil
 }
@@ -164,6 +166,7 @@ func (g *defaultCreateWithdrawRequestHandler) Self() (*regources.ReviewableReque
 			"link": g.currentPageLinks.Self,
 		})
 	}
+	g.currentPageLinks = result.Links
 
 	return result, nil
 }
@@ -184,6 +187,7 @@ func (g *defaultCreateWithdrawRequestHandler) First() (*regources.ReviewableRequ
 			"link": g.currentPageLinks.First,
 		})
 	}
+	g.currentPageLinks = result.Links
 
 	return result, nil
 }

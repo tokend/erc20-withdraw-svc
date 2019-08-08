@@ -23,6 +23,9 @@ func (s *Service) Run(ctx context.Context) {
 		if err != nil {
 			return errors.Wrap(err, "error occurred while withdrawal request page fetching")
 		}
+		if len(withdrawPage.Data) == 0 {
+			return nil
+		} 
 		for _, data := range withdrawPage.Data {
 			details := withdrawPage.Included.MustCreateWithdrawRequest(data.Relationships.RequestDetails.Data.GetKey())
 			err := s.sendWithdraw(ctx, data, details)
