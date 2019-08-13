@@ -26,7 +26,8 @@ const (
 
 	invalidDetails       = "Invalid creator details"
 	invalidTargetAddress = "Invalid target address"
-	tooSmallAmount        = "Withdrawn amount too small"
+	tooSmallAmount       = "Withdrawn amount too small"
+	transferFailed       = "Transfer failed"
 )
 
 type PreSentDetails struct {
@@ -62,7 +63,8 @@ func (s *Service) sendWithdraw(ctx context.Context, request regources.Reviewable
 
 	transaction, err := s.callTransfer(ctx, transferAmount, withdrawDetails.TargetAddress)
 	if err != nil {
-		return errors.Wrap(err, "transfer failed")
+		s.log.WithError(err).Error("Transfer failed - rejecting withdraw request")
+		return s.permanentReject(ctx, request, transferFailed)
 	}
 
 	err = s.approveRequest(ctx, request, taskCheckTxConfirmed, taskCheckTxSentSuccess, map[string]interface{}{
@@ -85,7 +87,7 @@ func (s *Service) callTransfer(ctx context.Context, amount *big.Int, targetAddre
 	}
 	return s.contract.Transact(&bind.TransactOpts{
 		Context: ctx,
-		From: from,
+		From:    from,
 		Signer: func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
 			signature, err := crypto.Sign(signer.Hash(tx).Bytes(), s.key)
 			if err != nil {
