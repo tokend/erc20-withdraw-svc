@@ -36,11 +36,16 @@ type ExternalDetails struct {
 }
 
 func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regources.ReviewableRequest, details *regources.CreateWithdrawRequest) error {
+	fields := logan.F{
+		"request_id":       request.ID,
+		"amount":           details.Attributes.Amount,
+		"asset":            s.asset.ID,
+	}
 	detailsbb := []byte(request.Attributes.ExternalDetails)
 	extDetails := ExternalDetails{}
 	err := json.Unmarshal(detailsbb, &extDetails)
 	if err != nil {
-		s.log.WithField("request_id", request.ID).WithError(err).Warn("Unable to unmarshal creator details")
+		s.log.WithFields(fields).WithError(err).Warn("Unable to unmarshal creator details")
 		return s.permanentReject(ctx, request, invalidDetails)
 	}
 	withdrawDetails := s.getWithdrawDetails(extDetails)
@@ -52,7 +57,7 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 			Warn("tx hash missing")
 		return s.permanentReject(ctx, request, invalidTXHash)
 	}
-
+	fields["eth_tx_hash"] = withdrawDetails.EthTxHash
 	receipt, err := s.client.TransactionReceipt(ctx, common.HexToHash(withdrawDetails.EthTxHash))
 	if err == ethereum.NotFound {
 		return nil
@@ -64,6 +69,7 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 	}
 
 	if receipt.Status != types.ReceiptStatusSuccessful {
+		s.log.WithFields(fields).Info("Transaction unsuccessful, rejecting request...")
 		return s.permanentReject(ctx, request, txFailed)
 	}
 
@@ -79,6 +85,7 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 		return errors.Wrap(err, "failed to review request second time", logan.F{"request_id": request.ID})
 	}
 
+	s.log.WithFields(fields).Info("Successfully approved request")
 	return nil
 }
 
