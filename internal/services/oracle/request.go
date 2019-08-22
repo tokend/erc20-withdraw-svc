@@ -54,11 +54,15 @@ func (s *Service) permanentReject(
 	if err != nil {
 		return errors.Wrap(err, "failed to parse request id")
 	}
+	details := xdrbuild.WithdrawalDetails{
+		ExternalDetails: "{}",
+	}
 	envelope, err := s.builder.Transaction(s.withdrawCfg.Owner).Op(xdrbuild.ReviewRequest{
-		ID:     id,
-		Hash:   &request.Attributes.Hash,
-		Action: xdr.ReviewRequestOpActionPermanentReject,
-		Reason: reason,
+		ID:      id,
+		Hash:    &request.Attributes.Hash,
+		Action:  xdr.ReviewRequestOpActionPermanentReject,
+		Reason:  reason,
+		Details: details,
 	}).Sign(s.withdrawCfg.Signer).Marshal()
 	if err != nil {
 		return errors.Wrap(err, "failed to prepare transaction envelope")
