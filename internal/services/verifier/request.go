@@ -58,7 +58,9 @@ func (s *Service) permanentReject(
 		ID:      id,
 		Hash:    &request.Attributes.Hash,
 		Action:  xdr.ReviewRequestOpActionPermanentReject,
-		Details: xdrbuild.WithdrawalDetails{},
+		Details: xdrbuild.WithdrawalDetails{
+			"{}",
+		},
 		Reason:  reason,
 	}).Sign(s.withdrawCfg.Signer).Marshal()
 	if err != nil {
