@@ -95,7 +95,9 @@ func (s *Service) callTransfer(ctx context.Context, amount *big.Int, targetAddre
 			}
 			return tx.WithSignature(signer, signature)
 		},
-		Nonce: big.NewInt(int64(nonce)),
+		GasLimit: s.transferCfg.GasLimit,
+		GasPrice: big.NewInt(s.transferCfg.GasPrice),
+		Nonce:    big.NewInt(int64(nonce)),
 	}, "transfer", to, amount)
 }
 

@@ -13,6 +13,8 @@ transfer:
   seed: "SECRET_SEED"
   address: "SOURCE_ADDRESS"
   confirmations: 20
+  gas_limit: 30000
+  gas_price: 20
 
 log:
   level: debug

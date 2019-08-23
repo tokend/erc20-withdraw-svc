@@ -10,6 +10,8 @@ type TransferConfig struct {
 	Seed          string `fig:"seed"`
 	Address       string `fig:"address"`
 	Confirmations int64  `fig:"confirmations"`
+	GasLimit      uint64 `fig:"gas_limit"`
+	GasPrice      int64  `fig:"gas_price"`
 }
 
 func (c *config) TransferConfig() TransferConfig {

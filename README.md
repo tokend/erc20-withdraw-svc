@@ -46,6 +46,8 @@ transfer:
   seed: "SECRET_SEED"
   address: "SOURCE_ADDRESS"
   confirmations: 20 #number of confirmations to wait for
+  gas_limit: 30000 #maximal amount of gas to be used by transfer transaction
+  gas_price: 20 #price per gas unit
 
 
 log:
