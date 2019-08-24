@@ -25,9 +25,18 @@ const (
 	invalidDetails = "Invalid external details"
 	invalidTXHash  = "Invalid ethereum transaction hash"
 	txFailed       = "Transaction failed"
+	transferFailed = "Transfer failed"
 )
 
+type ERC20Transfer struct {
+	From  common.Address
+	To    common.Address
+	Value *big.Int
+	Raw   types.Log
+}
+
 type SentDetails struct {
+	Amount    string `json:"amount"`
 	EthTxHash string `json:"eth_tx_hash"`
 }
 
@@ -37,9 +46,9 @@ type ExternalDetails struct {
 
 func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regources.ReviewableRequest, details *regources.CreateWithdrawRequest) error {
 	fields := logan.F{
-		"request_id":       request.ID,
-		"amount":           details.Attributes.Amount,
-		"asset":            s.asset.ID,
+		"request_id": request.ID,
+		"amount":     details.Attributes.Amount,
+		"asset":      s.asset.ID,
 	}
 	detailsbb := []byte(request.Attributes.ExternalDetails)
 	extDetails := ExternalDetails{}
@@ -71,6 +80,10 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		s.log.WithFields(fields).Info("Transaction unsuccessful, rejecting request...")
 		return s.permanentReject(ctx, request, txFailed)
+	}
+
+	if !s.LogsSuccessful(receipt, getAddress(details.Attributes.CreatorDetails), withdrawDetails.Amount) {
+		return s.permanentReject(ctx, request, transferFailed)
 	}
 
 	if !s.ensureEnoughConfirmations(ctx, receipt.BlockNumber.Int64()) {
@@ -111,4 +124,36 @@ func (s *Service) getWithdrawDetails(ext ExternalDetails) SentDetails {
 		}
 	}
 	return SentDetails{}
+}
+
+func (s *Service) LogsSuccessful(receipt *types.Receipt, destination string, amount string) bool {
+	for _, log := range receipt.Logs {
+		if log.Removed {
+			return false
+		}
+		parsed := new(ERC20Transfer)
+		if err := s.contract.UnpackLog(parsed, "Transfer", *log); err != nil {
+			continue
+		}
+		if parsed.To.String() != destination {
+			continue
+		}
+
+		if parsed.Value.String() != amount {
+			continue
+		}
+
+		return true
+	}
+
+	return false
+}
+
+func getAddress(details []byte) string {
+	withdrawDetails := struct {
+		Address string `json:"address"`
+	}{}
+	json.Unmarshal(details, &withdrawDetails)
+
+	return withdrawDetails.Address
 }

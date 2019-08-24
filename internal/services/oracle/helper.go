@@ -69,6 +69,7 @@ func (s *Service) sendWithdraw(ctx context.Context, request regources.Reviewable
 
 	err = s.approveRequest(ctx, request, taskCheckTxConfirmed, taskCheckTxSentSuccess, map[string]interface{}{
 		"eth_tx_hash": transaction.Hash().String(),
+		"amount":      transferAmount.String(),
 	})
 
 	if err != nil {
