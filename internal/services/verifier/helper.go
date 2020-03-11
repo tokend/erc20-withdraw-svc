@@ -10,6 +10,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	regources "gitlab.com/tokend/regources/generated"
 	"math/big"
+	"strings"
 )
 
 const (
@@ -78,12 +79,13 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 	}
 
 	if receipt.Status != types.ReceiptStatusSuccessful {
-		s.log.WithFields(fields).Info("Transaction unsuccessful, rejecting request...")
+		s.log.WithFields(fields).Warn("Transaction unsuccessful, rejecting request...")
 		return s.permanentReject(ctx, request, txFailed)
 	}
 
 	if !s.LogsSuccessful(receipt, getAddress(details.Attributes.CreatorDetails), withdrawDetails.Amount) {
-		return s.permanentReject(ctx, request, transferFailed)
+		s.log.WithFields(fields).Warn("Transfer unsuccessful...")
+		return errors.From(errors.New("transfer unsuccessful"), fields)
 	}
 
 	if !s.ensureEnoughConfirmations(ctx, receipt.BlockNumber.Int64()) {
@@ -135,7 +137,7 @@ func (s *Service) LogsSuccessful(receipt *types.Receipt, destination string, amo
 		if err := s.contract.UnpackLog(parsed, "Transfer", *log); err != nil {
 			continue
 		}
-		if parsed.To.String() != destination {
+		if strings.ToLower(parsed.To.String()) != strings.ToLower(destination) {
 			continue
 		}
 
