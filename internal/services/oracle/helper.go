@@ -90,6 +90,7 @@ func (s *Service) callTransfer(ctx context.Context, amount *big.Int, targetAddre
 		Context: ctx,
 		From:    from,
 		Signer: func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
+			signer = types.NewEIP155Signer(s.chainID)
 			signature, err := crypto.Sign(signer.Hash(tx).Bytes(), s.key)
 			if err != nil {
 				return nil, err
