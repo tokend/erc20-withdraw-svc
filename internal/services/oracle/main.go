@@ -1,12 +1,14 @@
 package oracle
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/pkg/errors"
 	"github.com/tokend/erc20-withdraw-svc/internal/config"
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/getters"
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/page"
@@ -15,6 +17,7 @@ import (
 	"github.com/tokend/erc20-withdraw-svc/internal/services/watchlist"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/go/xdrbuild"
+	"math/big"
 	"strings"
 )
 
@@ -46,9 +49,14 @@ type Service struct {
 	client   *ethclient.Client
 
 	decimals uint32
+	chainID *big.Int
 }
 
 func New(opts Opts) *Service {
+	chainID, err := opts.Client.ChainID(context.Background())
+	if err != nil {
+		panic(errors.Wrap(err, "failed to get chain id"))
+	}
 
 	parsed, err := abi.JSON(strings.NewReader(erc20ABI))
 	if err != nil {
@@ -87,6 +95,7 @@ func New(opts Opts) *Service {
 
 		withdrawals: opts.Streamer,
 		decimals:    uint32(*decimals),
+		chainID:     chainID,
 	}
 }
 
