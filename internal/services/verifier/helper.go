@@ -61,7 +61,7 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 	withdrawDetails := s.getWithdrawDetails(extDetails)
 
 	if withdrawDetails.EthTxHash == "" {
-		s.log.
+		s.log.WithFields(fields).
 			WithField("external_details", request.Attributes.ExternalDetails).
 			WithError(err).
 			Warn("tx hash missing")
@@ -70,12 +70,11 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 	fields["eth_tx_hash"] = withdrawDetails.EthTxHash
 	receipt, err := s.client.TransactionReceipt(ctx, common.HexToHash(withdrawDetails.EthTxHash))
 	if err == ethereum.NotFound {
+		s.log.WithFields(fields).Debug("transaction receipt not found")
 		return nil
 	}
 	if err != nil {
-		return errors.Wrap(err, "failed to get transaction receipt", logan.F{
-			"tx_hash": withdrawDetails.EthTxHash,
-		})
+		return errors.Wrap(err, "failed to get transaction receipt", fields)
 	}
 
 	if receipt.Status != types.ReceiptStatusSuccessful {
@@ -89,15 +88,15 @@ func (s *Service) confirmWithdrawSuccessful(ctx context.Context, request regourc
 	}
 
 	if !s.ensureEnoughConfirmations(ctx, receipt.BlockNumber.Int64()) {
+		s.log.WithFields(fields).Debug("waiting for confirmations")
 		return nil
 	}
 
 	err = s.approveRequest(ctx, request, 0, taskCheckTxConfirmed, map[string]interface{}{
 		"eth_block_number": receipt.BlockNumber.Int64(),
 	})
-
 	if err != nil {
-		return errors.Wrap(err, "failed to review request second time", logan.F{"request_id": request.ID})
+		return errors.Wrap(err, "failed to review request second time", fields)
 	}
 
 	s.log.WithFields(fields).Info("Successfully approved request")

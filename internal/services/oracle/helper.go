@@ -37,14 +37,15 @@ type PreSentDetails struct {
 func (s *Service) sendWithdraw(ctx context.Context, request regources.ReviewableRequest, details *regources.CreateWithdrawRequest) error {
 	detailsbb := []byte(details.Attributes.CreatorDetails)
 	withdrawDetails := PreSentDetails{}
+	fields := logan.F{"request_id": request.ID}
 	err := json.Unmarshal(detailsbb, &withdrawDetails)
 	if err != nil {
-		s.log.WithField("request_id", request.ID).WithError(err).Warn("Unable to unmarshal creator details")
+		s.log.WithFields(fields).WithError(err).Warn("Unable to unmarshal creator details")
 		return s.permanentReject(ctx, request, invalidDetails)
 	}
 
 	if withdrawDetails.TargetAddress == "" {
-		s.log.
+		s.log.WithFields(fields).
 			WithField("creator_details", details.Attributes.CreatorDetails).
 			WithError(err).
 			Warn("address missing")
@@ -53,13 +54,15 @@ func (s *Service) sendWithdraw(ctx context.Context, request regources.Reviewable
 
 	err = s.approveRequest(ctx, request, taskCheckTxSentSuccess, taskTryTransfer, map[string]interface{}{})
 	if err != nil {
-		return errors.Wrap(err, "failed to review request first time", logan.F{"request_id": request.ID})
+		return errors.Wrap(err, "failed to review request first time", fields)
 	}
 
 	transferAmount := prepareAmount(s.asset, s.decimals, uint64(details.Attributes.Amount))
 	if transferAmount.Uint64() == 0 {
 		return s.permanentReject(ctx, request, tooSmallAmount)
 	}
+
+	s.log.WithFields(fields).Info("request is processing, going to transfer tokens")
 
 	transaction, err := s.callTransfer(ctx, transferAmount, withdrawDetails.TargetAddress)
 	if err != nil {
@@ -71,9 +74,8 @@ func (s *Service) sendWithdraw(ctx context.Context, request regources.Reviewable
 		"eth_tx_hash": transaction.Hash().String(),
 		"amount":      transferAmount.String(),
 	})
-
 	if err != nil {
-		return errors.Wrap(err, "failed to review request second time", logan.F{"request_id": request.ID})
+		return errors.Wrap(err, "failed to review request second time", fields)
 	}
 
 	return nil
@@ -98,7 +100,7 @@ func (s *Service) callTransfer(ctx context.Context, amount *big.Int, targetAddre
 			return tx.WithSignature(signer, signature)
 		},
 		GasLimit: s.transferCfg.GasLimit,
-		GasPrice: big.NewInt(s.transferCfg.GasPrice),
+		GasPrice: FromGwei(big.NewInt(s.transferCfg.GasPrice)),
 		Nonce:    big.NewInt(int64(nonce)),
 	}, "transfer", to, amount)
 }

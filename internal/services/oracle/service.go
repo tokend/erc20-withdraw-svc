@@ -24,6 +24,7 @@ func (s *Service) Run(ctx context.Context) {
 			return errors.Wrap(err, "error occurred while withdrawal request page fetching")
 		}
 		if len(withdrawPage.Data) == 0 {
+			s.log.WithField("asset", s.asset.ID).Debug("no pending withdraw requests")
 			return nil
 		} 
 		for _, data := range withdrawPage.Data {
