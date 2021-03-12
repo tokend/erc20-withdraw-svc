@@ -11,6 +11,7 @@ import (
 )
 
 func (s *Service) Run(ctx context.Context) {
+	s.log.Info("service is started")
 	go s.assetWatcher.Run(ctx)
 
 	s.Add(2)
