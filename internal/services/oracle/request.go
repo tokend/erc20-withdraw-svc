@@ -3,18 +3,19 @@ package oracle
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/go/xdrbuild"
+	"gitlab.com/tokend/keypair"
 	regources "gitlab.com/tokend/regources/generated"
-	"strconv"
 )
 
 func (s *Service) approveRequest(
-	ctx context.Context,
-	request regources.ReviewableRequest,
-	toAdd, toRemove uint32,
-	extDetails map[string]interface{}) error {
+	ctx context.Context, request regources.ReviewableRequest,
+	toAdd, toRemove uint32, extDetails map[string]interface{},
+) error {
 	id, err := strconv.ParseUint(request.ID, 10, 64)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse request id")
@@ -23,7 +24,7 @@ func (s *Service) approveRequest(
 	if err != nil {
 		return errors.Wrap(err, "failed to marshal external bb map")
 	}
-	envelope, err := s.builder.Transaction(s.withdrawCfg.Owner).Op(xdrbuild.ReviewRequest{
+	envelope, err := s.builder.Transaction(keypair.MustParseAddress(s.asset.Relationships.Owner.Data.ID)).Op(xdrbuild.ReviewRequest{
 		ID:     id,
 		Hash:   &request.Attributes.Hash,
 		Action: xdr.ReviewRequestOpActionApprove,
@@ -48,8 +49,8 @@ func (s *Service) approveRequest(
 }
 
 func (s *Service) permanentReject(
-	ctx context.Context,
-	request regources.ReviewableRequest, reason string) error {
+	ctx context.Context, request regources.ReviewableRequest, reason string,
+) error {
 	id, err := strconv.ParseUint(request.ID, 10, 64)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse request id")
@@ -57,7 +58,7 @@ func (s *Service) permanentReject(
 	details := xdrbuild.WithdrawalDetails{
 		ExternalDetails: "{}",
 	}
-	envelope, err := s.builder.Transaction(s.withdrawCfg.Owner).Op(xdrbuild.ReviewRequest{
+	envelope, err := s.builder.Transaction(keypair.MustParseAddress(s.asset.Relationships.Owner.Data.ID)).Op(xdrbuild.ReviewRequest{
 		ID:      id,
 		Hash:    &request.Attributes.Hash,
 		Action:  xdr.ReviewRequestOpActionPermanentReject,

@@ -7,6 +7,7 @@ import (
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
+	"gitlab.com/tokend/go/xdr"
 	regources "gitlab.com/tokend/regources/generated"
 	"time"
 )
@@ -30,8 +31,8 @@ func (s *Service) Run(ctx context.Context) {
 		s.log,
 		"asset-watcher",
 		s.processAllAssetsOnce,
-		10*time.Second,
 		20*time.Second,
+		30*time.Second,
 		5*time.Minute,
 	)
 }
@@ -58,12 +59,13 @@ func (s *Service) processAllAssetsOnce(ctx context.Context) error {
 }
 
 func (s *Service) getWatchList() ([]Details, error) {
-	s.streamer.SetFilters(query.AssetFilters{Owner: &s.owner})
+	policy := uint32(xdr.AssetPolicyWithdrawable)
+	s.streamer.SetFilters(query.AssetFilters{Policy: &policy})
 
 	assetsResponse, err := s.streamer.List()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get asset list for owner", logan.F{
-			"owner_address": s.owner,
+			"asset_policy": policy,
 		})
 	}
 
@@ -97,7 +99,10 @@ func (s *Service) filter(assets []regources.Asset) ([]Details, error) {
 	for _, asset := range assets {
 		details := asset.Attributes.Details
 		assetDetails := AssetDetails{}
-		_ = json.Unmarshal([]byte(details), &assetDetails)
+		err := json.Unmarshal(details, &assetDetails)
+		if err != nil {
+			s.log.WithError(err).Debug("bad asset details json")
+		}
 
 		if !assetDetails.ERC20.Withdraw {
 			continue

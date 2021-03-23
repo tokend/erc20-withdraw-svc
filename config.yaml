@@ -4,7 +4,7 @@ horizon:
 
 withdraw:
   signer: "S_ASSET_OWNER_SECRET_KEY"
-  owner: "G_ASSET_OWNER_ADDRESS"
+  # asset owner is used as tx source
 
 rpc:
   endpoint: "ETH_NODE_ADDRESS"
