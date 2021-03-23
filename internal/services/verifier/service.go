@@ -41,16 +41,14 @@ func (s *Service) Run(ctx context.Context) {
 
 
 func (s *Service) prepare() {
-
 	state := reviewableRequestStatePending
-	reviewer := s.withdrawCfg.Owner.Address()
 	pendingTasks := fmt.Sprintf("%d", taskCheckTxConfirmed)
 	pendingTasksNotSet := fmt.Sprintf("%d", (taskTryTransfer | taskCheckTxSentSuccess))
 	filters := query.CreateWithdrawRequestFilters{
 		Asset: &s.asset.ID,
 		ReviewableRequestFilters: query.ReviewableRequestFilters{
 			State:              &state,
-			Reviewer:           &reviewer,
+			Reviewer:           &s.asset.Relationships.Owner.Data.ID,
 			PendingTasks:       &pendingTasks,
 			PendingTasksNotSet: &pendingTasksNotSet,
 		},

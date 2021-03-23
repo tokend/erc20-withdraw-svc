@@ -4,6 +4,9 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"math/big"
+	"strings"
+
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -17,8 +20,6 @@ import (
 	"github.com/tokend/erc20-withdraw-svc/internal/services/watchlist"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/tokend/go/xdrbuild"
-	"math/big"
-	"strings"
 )
 
 const erc20ABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"balance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
@@ -49,7 +50,7 @@ type Service struct {
 	client   *ethclient.Client
 
 	decimals uint32
-	chainID *big.Int
+	chainID  *big.Int
 }
 
 func New(opts Opts) *Service {
@@ -92,7 +93,6 @@ func New(opts Opts) *Service {
 		builder:     opts.Builder,
 		asset:       opts.Asset,
 		key:         key,
-
 		withdrawals: opts.Streamer,
 		decimals:    uint32(*decimals),
 		chainID:     chainID,
@@ -100,16 +100,14 @@ func New(opts Opts) *Service {
 }
 
 func (s *Service) prepare() {
-
 	state := reviewableRequestStatePending
-	reviewer := s.withdrawCfg.Owner.Address()
 	pendingTasks := fmt.Sprintf("%d", taskTryTransfer)
 	pendingTasksNotSet := fmt.Sprintf("%d", taskCheckTxSentSuccess)
 	filters := query.CreateWithdrawRequestFilters{
 		Asset: &s.asset.ID,
 		ReviewableRequestFilters: query.ReviewableRequestFilters{
 			State:              &state,
-			Reviewer:           &reviewer,
+			Reviewer:           &s.asset.Relationships.Owner.Data.ID,
 			PendingTasks:       &pendingTasks,
 			PendingTasksNotSet: &pendingTasksNotSet,
 		},

@@ -9,8 +9,8 @@ import (
 )
 
 type WithdrawConfig struct {
-	Signer keypair.Full    `fig:"signer"`
-	Owner  keypair.Address `fig:"owner"`
+	Signer keypair.Full `fig:"signer"`
+	// Asset owner is used as tx source
 }
 
 func (c *config) WithdrawConfig() WithdrawConfig {
