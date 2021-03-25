@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"net/http"
+
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/client"
 	"gitlab.com/tokend/go/xdr"
-	"net/http"
 
 	regources "gitlab.com/tokend/regources/generated"
 
@@ -42,6 +43,14 @@ type txFailureResponse struct {
 			} `json:"result_codes"`
 		} `json:"meta,omitempty"`
 	} `json:"errors"`
+}
+
+func (f TxFailure) GetLoganFields() map[string]interface{} {
+	return map[string]interface{}{
+		"result_xdr":              f.ResultXDR,
+		"transaction_result_code": f.TransactionResultCode,
+		"operation_result_codes":  f.OperationResultCodes,
+	}
 }
 
 type Interface interface {

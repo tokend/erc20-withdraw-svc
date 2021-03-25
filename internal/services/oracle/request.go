@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"github.com/tokend/erc20-withdraw-svc/internal/horizon/submit"
+	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/tokend/go/xdr"
 	"gitlab.com/tokend/go/xdrbuild"
@@ -42,7 +44,11 @@ func (s *Service) approveRequest(
 	}
 	_, err = s.txSubmitter.Submit(ctx, envelope, true)
 	if err != nil {
-		return errors.Wrap(err, "failed to approve withdraw request")
+		var fields logan.F
+		if txFailed, ok := err.(submit.TxFailure); ok {
+			fields = txFailed.GetLoganFields()
+		}
+		return errors.Wrap(err, "failed to approve withdraw request", fields)
 	}
 
 	return nil
@@ -70,7 +76,11 @@ func (s *Service) permanentReject(
 	}
 	_, err = s.txSubmitter.Submit(ctx, envelope, true)
 	if err != nil {
-		return errors.Wrap(err, "failed to permanently reject withdraw request")
+		var fields logan.F
+		if txFailed, ok := err.(submit.TxFailure); ok {
+			fields = txFailed.GetLoganFields()
+		}
+		return errors.Wrap(err, "failed to permanently reject withdraw request", fields)
 	}
 
 	return nil
