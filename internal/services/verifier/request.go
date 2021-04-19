@@ -47,7 +47,7 @@ func (s *Service) approveRequest(
 	_, err = s.txSubmitter.Submit(ctx, envelope, true)
 	if err != nil {
 		var fields logan.F
-		if txFailed, ok := err.(submit.TxFailure); ok {
+		if txFailed, ok := err.(*submit.TxFailure); ok {
 			fields = txFailed.GetLoganFields()
 		}
 		return errors.Wrap(err, "failed to approve withdraw request", fields)
@@ -78,7 +78,7 @@ func (s *Service) permanentReject(
 	_, err = s.txSubmitter.Submit(ctx, envelope, true)
 	if err != nil {
 		var fields logan.F
-		if txFailed, ok := err.(submit.TxFailure); ok {
+		if txFailed, ok := err.(*submit.TxFailure); ok {
 			fields = txFailed.GetLoganFields()
 		}
 		return errors.Wrap(err, "failed to permanently reject withdraw request", fields)

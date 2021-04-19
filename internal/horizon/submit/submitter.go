@@ -45,7 +45,7 @@ type txFailureResponse struct {
 	} `json:"errors"`
 }
 
-func (f TxFailure) GetLoganFields() map[string]interface{} {
+func (f *TxFailure) GetLoganFields() map[string]interface{} {
 	return map[string]interface{}{
 		"result_xdr":              f.ResultXDR,
 		"transaction_result_code": f.TransactionResultCode,
@@ -116,8 +116,8 @@ func isStatusCodeSuccessful(code int) bool {
 	return code >= 200 && code < 300
 }
 
-func newTxFailure(response txFailureResponse) TxFailure {
-	failure := TxFailure{
+func newTxFailure(response txFailureResponse) *TxFailure {
+	failure := &TxFailure{
 		error: errors.New(response.Errors[0].Detail),
 	}
 
