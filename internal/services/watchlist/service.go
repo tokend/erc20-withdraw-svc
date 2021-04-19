@@ -3,19 +3,21 @@ package watchlist
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/query"
 	"gitlab.com/distributed_lab/logan/v3"
 	"gitlab.com/distributed_lab/logan/v3/errors"
 	"gitlab.com/distributed_lab/running"
 	"gitlab.com/tokend/go/xdr"
 	regources "gitlab.com/tokend/regources/generated"
-	"time"
 )
 
 //GetToAdd returns channel assets to watch deposits for will be sent into
 func (s *Service) GetToAdd() <-chan Details {
 	return s.toAdd
 }
+
 //GetToRemove returns channel assets to stop watching deposits for will be sent into
 func (s *Service) GetToRemove() <-chan string {
 	return s.toRemove
@@ -60,7 +62,8 @@ func (s *Service) processAllAssetsOnce(ctx context.Context) error {
 
 func (s *Service) getWatchList() ([]Details, error) {
 	policy := uint32(xdr.AssetPolicyWithdrawable)
-	s.streamer.SetFilters(query.AssetFilters{Policy: &policy})
+	activeAssets := uint32(0)
+	s.streamer.SetFilters(query.AssetFilters{Policy: &policy, State: &activeAssets})
 
 	assetsResponse, err := s.streamer.List()
 	if err != nil {

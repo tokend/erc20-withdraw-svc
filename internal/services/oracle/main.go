@@ -75,7 +75,8 @@ func New(opts Opts) *Service {
 	decimals := new(uint8)
 	err = contract.Call(&bind.CallOpts{}, decimals, "decimals")
 	if err != nil {
-		panic(err)
+		opts.Log.WithError(err).Error("failed to get decimals of erc20 contract")
+		return nil
 	}
 
 	key, err := crypto.HexToECDSA(opts.Config.TransferConfig().Seed)
