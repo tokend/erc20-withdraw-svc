@@ -2,6 +2,7 @@ package withdrawer
 
 import (
 	"context"
+
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/getters"
 	"github.com/tokend/erc20-withdraw-svc/internal/horizon/submit"
 	"github.com/tokend/erc20-withdraw-svc/internal/services/oracle"
@@ -41,6 +42,7 @@ func (s *Service) cancellor(ctx context.Context) {
 }
 
 func (s *Service) spawn(ctx context.Context, details watchlist.Details) {
+	fields := logan.F{"asset_code": details.ID}
 
 	oracleService := oracle.New(oracle.Opts{
 		Builder:   s.builder,
@@ -52,6 +54,11 @@ func (s *Service) spawn(ctx context.Context, details watchlist.Details) {
 
 		Streamer: getters.NewDefaultCreateWithdrawRequestHandler(s.config.Horizon()),
 	})
+	if oracleService == nil {
+		s.log.WithFields(fields).Warn("oracle service is nil, skipping this asset")
+		return
+	}
+
 	verifierService := verifier.New(verifier.Opts{
 		Builder:   s.builder,
 		Log:       s.log,
@@ -69,7 +76,5 @@ func (s *Service) spawn(ctx context.Context, details watchlist.Details) {
 	go oracleService.Run(innerCtx)
 	go verifierService.Run(innerCtx)
 
-	s.log.WithFields(logan.F{
-		"asset_code": details.ID,
-	}).Info("Started listening for withdrawals")
+	s.log.WithFields(fields).Info("Started listening for withdrawals")
 }
