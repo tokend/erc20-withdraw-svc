@@ -20,7 +20,7 @@ func (s AssetDetails) Validate() error {
 	address := s.ERC20.Address.String()
 	errs := validation.Errors{
 		"ExternalSystemType": validation.Validate(&s.ExternalSystemType, validation.Required, validation.Min(1)),
-		"Deposit":            validation.Validate(&s.ERC20.Withdraw, validation.Required),
+		"Withdraw":           validation.Validate(&s.ERC20.Withdraw, validation.Required),
 		"Address": validation.Validate(
 			&address,
 			validation.Required,

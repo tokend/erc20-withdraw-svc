@@ -42,7 +42,7 @@ func (s *Service) approveRequest(
 	if err != nil {
 		return errors.Wrap(err, "failed to prepare transaction envelope")
 	}
-	_, err = s.txSubmitter.Submit(ctx, envelope, true)
+	_, err = s.txSubmitter.Submit(ctx, envelope, false)
 	if err != nil {
 		var fields logan.F
 		if txFailed, ok := err.(*submit.TxFailure); ok {
@@ -74,7 +74,7 @@ func (s *Service) permanentReject(
 	if err != nil {
 		return errors.Wrap(err, "failed to prepare transaction envelope")
 	}
-	_, err = s.txSubmitter.Submit(ctx, envelope, true)
+	_, err = s.txSubmitter.Submit(ctx, envelope, false)
 	if err != nil {
 		var fields logan.F
 		if txFailed, ok := err.(*submit.TxFailure); ok {
