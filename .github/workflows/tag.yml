@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - '*.*.*'
+      
+env:
+  IMAGE_NAME: erc20-withdraw-svc
 
 jobs:
   build:
