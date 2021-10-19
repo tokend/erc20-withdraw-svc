@@ -26,7 +26,7 @@ jobs:
 
       - name: Push image
         run: |
-          IMAGE_ID= ${{ github.repository_owner }}/$IMAGE_NAME
+          IMAGE_ID=${{ github.repository_owner }}/$IMAGE_NAME
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           VERSION=${{steps.vars.outputs.tag}}
           echo IMAGE_ID=$IMAGE_ID
